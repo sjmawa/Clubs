@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'club_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'club_system_db',
+        'NAME': 'club_system',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
@@ -95,7 +95,7 @@ DATABASES = {
 }
 
 
-
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
