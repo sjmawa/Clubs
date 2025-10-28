@@ -1,0 +1,48 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 gap-6">
+    {% for club in clubs %}
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
+        
+        {% comment %} Club Image {% endcomment %}
+        {% if club.image %}
+        <a href="{% url 'club-detail' club.id %}">
+            <img src="{{ club.image.url }}" alt="{{ club.name }}" class="w-full h-40 object-cover">
+        </a>
+        {% else %}
+        <a href="{% url 'club-detail' club.id %}">
+            <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
+                No Image
+            </div>
+        </a>
+        {% endif %}
+
+        {% comment %} Card Content {% endcomment %}
+        <div class="p-4 space-y-3">
+            <!-- Title -->
+            <h3 class="text-lg font-semibold text-gray-800">
+                <a href="{% url 'club-detail' club.id %}">{{ club.name }}</a>
+            </h3>
+
+            <!-- Description -->
+            <p class="text-gray-600 text-sm">
+                {{ club.description|truncatewords:15 }}
+            </p>
+
+            <!-- Created At -->
+            <p class="text-sm text-gray-500">📅 Created on {{ club.created_at|date:"M d, Y" }}</p>
+
+            {% comment %} Organizer/Admin options {% endcomment %}
+            {% if perms.clubs.change_club %}
+            <div class="flex gap-2 pt-2">
+                <a href="{% url 'update-club' club.id %}" class="px-3 py-1 bg-green-300 rounded-xl text-sm">Update</a>
+                <form action="{% url 'delete-club' club.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="px-3 py-1 bg-red-400 rounded-xl text-sm">Delete</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-500 text-center col-span-full">No clubs available.</p>
+    {% endfor %}
+</div>
