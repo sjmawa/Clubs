@@ -17,7 +17,7 @@ class ClubRole(models.Model):
     role_name = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.name} ({self.club.name})"
+        return f"{self.role_name} ({self.club.name})"
 
 
 class ClubMembership(models.Model):

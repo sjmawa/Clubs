@@ -23,7 +23,7 @@ def club_detail(request, club_id):
         'roles': roles,
         'is_member': is_member
     })
-
+@login_required(login_url='sign-in')
 def create_club(request):
     if request.method == 'POST':
         club_form = ClubForm(request.POST, request.FILES)

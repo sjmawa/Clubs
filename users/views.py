@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, HttpResponse
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User,Group
+from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
 from users.forms import CustomRegisterForm,AssignRoleForm,CreateRoleForm
 from django.contrib import messages
@@ -8,7 +8,8 @@ from users.forms import LoginForm
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count, Q
-
+from django.contrib.auth import get_user_model
+User= get_user_model()
 def sign_up(request):
     if request.method == 'GET':
         form = CustomRegisterForm()

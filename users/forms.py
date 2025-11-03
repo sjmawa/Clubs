@@ -1,42 +1,51 @@
 import re
-from django.contrib.auth.models import User,Group,Permission
+from django.contrib.auth.models import Group,Permission
+from django.contrib.auth import get_user_model
 from django import forms
 from events.forms import StyledFormMixin
 from django.contrib.auth.forms import AuthenticationForm
 from clubs.models import ClubRole as clubrole
-
+from users.models import CustomUser
+User= get_user_model()
 class CustomRegisterForm(StyledFormMixin, forms.ModelForm):
-    password1 = forms.CharField(widget=forms.PasswordInput)
+    password1 = forms.CharField(label="Password",widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(label="Username")
     class Meta:
-        model= User
-        fields= ['username', 'first_name', 'last_name', 'email', 'password1', 'confirm_password']
+        model= CustomUser
+        fields= ['username', 'first_name', 'last_name', 'email', 'password1', 'confirm_password','contact']
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        existing_user = User.objects.filter(username=username).first()
+        if existing_user:
+            if not existing_user.is_active:
+                existing_user.delete()
+            else:
+                raise forms.ValidationError("This username is already taken.")
+        return username
     def clean_password1(self):
         password1 = self.cleaned_data.get('password1')
-        errors =[]
-        if len(password1) < 8:
-            errors.append('Password must be at least 8 character long')
-        if not re.search(r'[A-Z]', password1):
-            errors.append(
-                'Password must include at least one uppercase letter.')
-        if not re.search(r'[a-z]', password1):
-            errors.append(
-                'Password must include at least one lowercase letter.')
-        if not re.search(r'[0-9]', password1):
-            errors.append('Password must include at least one number.')
-
-        if not re.search(r'[@#$%^&+=]', password1):
-            errors.append(
-                'Password must include at least one special character.')
-        if errors:
-            raise forms.ValidationError(errors)
         return password1
     def clean_email(self):
         email= self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email is already in use.")
+        if not email.endswith('@gmail.com'):
+            raise forms.ValidationError("Only Gmail addresses are allowed.")
         return email
-    # non field error
+    def clean_contact(self):
+        contact = self.cleaned_data.get('contact')
+
+        contact = contact.replace(' ', '').replace('-', '')
+
+        if contact.startswith('+880'):
+            contact= '0' + contact[4:]
+
+        if not re.match(r'^01[3-9]\d{8}$', contact):
+            raise forms.ValidationError("Enter a valid Bangladeshi phone number (e.g. 017XXXXXXXX or +88017XXXXXXXX).")
+
+        return contact
+
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get("password1")
