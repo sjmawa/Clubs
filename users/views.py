@@ -6,6 +6,7 @@ from users.forms import CustomRegisterForm,AssignRoleForm,CreateRoleForm
 from django.contrib import messages
 from users.forms import LoginForm
 from django.contrib.auth.tokens import default_token_generator
+from django.middleware.csrf import get_token
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count, Q
 from django.contrib.auth import get_user_model
@@ -13,9 +14,17 @@ User= get_user_model()
 def sign_up(request):
     if request.method == 'GET':
         form = CustomRegisterForm()
+        # ensure CSRF cookie is set and log it for debugging
+        token = get_token(request)
+        print(f"CSRF token set on GET (get_token): {token}")
         return render(request, 'registration/sign_up.html', {'form': form})
     elif request.method == 'POST':
         form = CustomRegisterForm(request.POST)
+        # Debugging: log CSRF tokens from POST and cookies
+        posted = request.POST.get('csrfmiddlewaretoken')
+        cookie = request.COOKIES.get('csrftoken')
+        print(f"CSRF token posted: {posted}")
+        print(f"CSRF cookie: {cookie}")
         if form.is_valid():
             user = form.save(commit=False)
             print(user)  

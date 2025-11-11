@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
+{% if messages %}
+                {% for message in messages %}
+                <p style="color:red;">{{ message }}</p>
+                {% endfor %}
+{% endif %}
 <div class="relative flex justify-center items-center mt-5 mb-5">
     <div class="flex flex-col items-center">
         {% if club.image %}
@@ -20,10 +24,32 @@
 </div>
 <div class="mt-4 mb-5">
     {% if club.description %}
-        <p class="text-gray-700 ml-4 m-2 mx-auto">{{ club.description }}</p>
+        <p class="text-gray-700 text-justify leading-relaxed max-w-5xl mx-auto mt-4 mb-10 whitespace-pre-line">
+    {{ club.description }}
+</p>
     {% else %}
         <p class="text-gray-500 italic mt-2">No description available.</p>
     {% endif %}
 </div>
+<!-- Join Club Button -->
+
+{% if user.is_authenticated %}
+    {% if is_member %}
+        <button type="button" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed" disabled>
+            Joined
+        </button>
+    {% else %}
+        <form action="{% url 'join-club' club.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                Join Club
+            </button>
+        </form>
+    {% endif %}
+{% else %}
+    <a href="{% url 'sign-in' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+        Login to Join
+    </a>
+{% endif %}
 
 {% endblock %}

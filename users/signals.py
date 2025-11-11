@@ -23,11 +23,3 @@ def send_activation_email(sender, instance, created, **kwargs):
                       settings.EMAIL_HOST_USER, recipient_list)
         except Exception as e:
             print(f"Failed to send email to {instance.email}: {str(e)}")
-
-@receiver(post_save, sender=ClubMembership)
-def assign_default_role(sender, instance, created, **kwargs):
-    if created and not instance.role:
-        default_role = ClubRole.objects.filter(club=instance.club, role_name="Member").first()
-        if default_role:
-            instance.role = default_role
-            instance.save()

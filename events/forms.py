@@ -1,4 +1,6 @@
 from django import forms 
+from events.models import Event
+
 class StyledFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -38,3 +40,19 @@ class StyledFormMixin:
                 field.widget.attrs.update({
                     'class': self.default_classes
                 })
+
+class EventForm(StyledFormMixin, forms.ModelForm):
+    date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    time = forms.TimeField(
+        required=False,
+        widget=forms.TimeInput(attrs={'type': 'time'})
+    )
+
+    class Meta:
+        model = Event
+        fields = [
+            'title','description','event_type','club','date','time','location',
+            'image','max_capacity','is_online'
+        ]

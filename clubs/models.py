@@ -25,6 +25,7 @@ class ClubMembership(models.Model):
     club = models.ForeignKey('Club', on_delete=models.CASCADE, related_name="memberships")
     role = models.ForeignKey(ClubRole, on_delete=models.SET_NULL, null=True, blank=True) 
     joined_at = models.DateTimeField(default=timezone.now)
+    confirmed = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('user', 'club')
