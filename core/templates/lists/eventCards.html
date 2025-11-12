@@ -1,0 +1,65 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 gap-6">
+    {% for event in events %}
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition">
+
+        {% comment %} Event Image or Placeholder {% endcomment %}
+        {% if event.image %}
+        <a href="{% url 'event-detail' event.id %}">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-40 object-cover">
+        </a>
+        {% else %}
+        <a href="{% url 'event-detail' event.id %}">
+            <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
+                No Image
+            </div>
+        </a>
+        {% endif %}
+
+        {% comment %} Event Details {% endcomment %}
+        <div class="p-4 space-y-3">
+
+            <!-- Title -->
+            <h3 class="text-lg font-semibold text-gray-800">
+                <a href="{% url 'event-detail' event.id %}">{{ event.title }}</a>
+            </h3>
+
+            <!-- Description -->
+            <p class="text-gray-600 text-sm">
+                {{ event.description|truncatewords:15 }}
+            </p>
+
+            <!-- Event Type -->
+            <p class="text-sm text-blue-600 font-medium">
+                {% if event.event_type == 'club' %}
+                🔹 Club Event
+                {% else %}
+                🌐 General Event
+                {% endif %}
+            </p>
+
+            <!-- Date and Club Info -->
+            <div class="text-sm text-gray-500 space-y-1">
+                <p>📅 {{ event.date|date:"M d, Y" }}</p>
+                {% if event.club %}
+                <p>🏛️ Organized by {{ event.club.name }}</p>
+                {% endif %}
+            </div>
+
+            {% comment %} Admin options (optional) {% endcomment %}
+            {% comment %}
+            {% if perms.events.change_event %}
+            <div class="flex gap-2 pt-2">
+                <a href="{% url 'update-event' event.id %}" class="px-3 py-1 bg-green-300 rounded-xl text-sm">Update</a>
+                <form action="{% url 'delete-event' event.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="px-3 py-1 bg-red-400 rounded-xl text-sm">Delete</button>
+                </form>
+            </div>
+            {% endif %}
+            {% endcomment %}
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-gray-500 text-center col-span-full">No events available.</p>
+    {% endfor %}
+</div>

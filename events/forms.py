@@ -12,13 +12,13 @@ class StyledFormMixin:
                 print("inside textinput")
                 field.widget.attrs.update({
                     'class': self.default_classes,
-                    "placeholder":f" Enter {field.label.lower()}"
+                    "placeholder":f" Enter {field.label.lower() if field.label else field_name}",
                 })
             elif isinstance(field.widget, forms.Textarea):
                 print("inside textarea")
                 field.widget.attrs.update({
                     'class': self.default_classes,
-                    "placeholder":f" Enter {field.label.lower()}",
+                    "placeholder":f" Enter {field.label.lower() if field.label else field_name}",
                     'rows':5
                 })
             elif isinstance(field.widget, forms.SelectDateWidget):
@@ -43,9 +43,11 @@ class StyledFormMixin:
 
 class EventForm(StyledFormMixin, forms.ModelForm):
     date = forms.DateField(
+        label="Event Date",
         widget=forms.DateInput(attrs={'type': 'date'})
     )
     time = forms.TimeField(
+        label="Event Time",
         required=False,
         widget=forms.TimeInput(attrs={'type': 'time'})
     )

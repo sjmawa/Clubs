@@ -32,24 +32,24 @@
     {% endif %}
 </div>
 <!-- Join Club Button -->
-
+<div class="max-w-5xl mx-auto text-center mt-6">
 {% if user.is_authenticated %}
     {% if is_member %}
-        <button type="button" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed" disabled>
+        <button type="button" class="bg-gray-500 max-w-5xl mx-auto text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed" disabled>
             Joined
         </button>
     {% else %}
         <form action="{% url 'join-club' club.id %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+            <button type="submit" class="bg-blue-600 max-w-5xl mx-auto hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
                 Join Club
             </button>
         </form>
     {% endif %}
 {% else %}
-    <a href="{% url 'sign-in' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+    <a href="{% url 'sign-in' %}" class="bg-blue-600 max-w-5xl mx-auto hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
         Login to Join
     </a>
 {% endif %}
-
+</div>
 {% endblock %}
