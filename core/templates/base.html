@@ -18,6 +18,15 @@
     {% include 'nav/logged_nav.html' %}
 
     <main>
+      <div>
+        {% if messages %}
+        {% for message in messages %}
+            <div class="px-2 py-1 rounded-lg
+            {% if message.tags == 'success' %}bg-green-300 text-green-600
+            {% else %}bg-red-300 text-red-600
+             {% endif %}">{{message}}</div>
+        {% endfor %}
+        {% endif %}
         {% block content %}{% endblock content %}
     </main>
 

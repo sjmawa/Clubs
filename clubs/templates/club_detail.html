@@ -22,11 +22,18 @@
     </div>
     <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-300 -z-10"></div>
 </div>
+<div class= "container max-w-5xl mx-auto py-8 px-4 space-y-8">
 <div class="mt-4 mb-5">
     {% if club.description %}
-        <p class="text-gray-700 text-justify leading-relaxed max-w-5xl mx-auto mt-4 mb-10 whitespace-pre-line">
-    {{ club.description }}
-</p>
+        <p id="desc" class="text-gray-700 text-justify leading-relaxed whitespace-pre-line">
+            {{ club.description|slice:":250" }}{% if club.description|length > 250 %}...{% endif %}
+        </p>
+
+        {% if club.description|length > 250 %}
+        <button id="toggleDesc" 
+            class="text-blue-600 hover:underline max-w-5xl mx-auto block text-left">Read more
+        </button>
+        {% endif %}
     {% else %}
         <p class="text-gray-500 italic mt-2">No description available.</p>
     {% endif %}
@@ -52,4 +59,39 @@
     </a>
 {% endif %}
 </div>
+{% include 'lists/eventCards.html' %}
+<h3 class="text-lg text-center font-semibold mb-2">Meet Our Executive Committee</h3>
+{% if committee %}
+    <ul>
+        {% for member in committee %}
+            <li>{{ member.role.role_name }} — {{ member.user.get_full_name|default:member.user.username }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No executive committee members yet.</p>
+{% endif %}
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const desc = document.getElementById("desc");
+    const btn = document.getElementById("toggleDesc");
+
+    if (!btn) return;
+
+    const fullText = `{{ club.description|escapejs }}`;
+    const shortText = fullText.slice(0, 250) + "...";
+    let expanded = false;
+
+    btn.addEventListener("click", () => {
+        if (expanded) {
+            desc.textContent = shortText;
+            btn.textContent = "Read more";
+        } else {
+            desc.textContent = fullText;
+            btn.textContent = "Read less";
+        }
+        expanded = !expanded;
+    });
+});
+</script>
 {% endblock %}

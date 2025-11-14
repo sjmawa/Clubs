@@ -30,8 +30,8 @@ class CustomRegisterForm(StyledFormMixin, forms.ModelForm):
         email= self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email is already in use.")
-        if not email.endswith('@gmail.com'):
-            raise forms.ValidationError("Only Gmail addresses are allowed.")
+        # if not email.endswith('@gmail.com'):
+        #     raise forms.ValidationError("Only Gmail addresses are allowed.")
         return email
     def clean_contact(self):
         contact = self.cleaned_data.get('contact')

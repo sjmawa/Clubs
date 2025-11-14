@@ -70,3 +70,24 @@ def confirm_membership(request, membership_id, token):
     else:
         return HttpResponse("Invalid or expired token.", status=400)
     
+@login_required(login_url='sign-in')
+def add_role(request, club_id):
+    club = get_object_or_404(Club, id=club_id)
+
+    # Optional: restrict to club creator or superuser
+    if not request.user.is_superuser and not club.memberships.filter(user=request.user, role__role_name="President").exists():
+        messages.error(request, "You are not authorized to add roles.")
+        return redirect('club-detail', club_id=club.id)
+
+    if request.method == 'POST':
+        form = ClubRoleForm(request.POST)
+        if form.is_valid():
+            role = form.save(commit=False)
+            role.club = club
+            role.save()
+            messages.success(request, f"Role '{role.role_name}' added successfully!")
+            return redirect('club-detail', club_id=club.id)
+    else:
+        form = ClubRoleForm()
+
+    return render(request, 'add_role.html', {'form': form, 'club': club})
