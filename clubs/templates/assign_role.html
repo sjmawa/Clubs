@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-md mx-auto mt-10 bg-white shadow-md rounded-lg p-6">
+
+    <h2 class="text-2xl font-bold mb-4 text-center">
+        Assign Role – {{ member.user.username }}
+    </h2>
+
+    <p class="text-center mb-4">
+        Club: <strong>{{ club.name }}</strong>
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label class="block font-semibold mb-1">Select New Role</label>
+        <select name="role" class="w-full border px-3 py-2 rounded mb-4">
+            <option value="member" {% if member.role == "member" %}selected{% endif %}>Member</option>
+            <option value="president" {% if member.role == "president" %}selected{% endif %}>President</option>
+            <option value="vice_president" {% if member.role == "vice_president" %}selected{% endif %}>Vice President</option>
+            <option value="secretary" {% if member.role == "secretary" %}selected{% endif %}>Secretary</option>
+            <option value="treasurer" {% if member.role == "treasurer" %}selected{% endif %}>Treasurer</option>
+        </select>
+
+        <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+            Update Role
+        </button>
+    </form>
+
+</div>
+
+{% endblock %}

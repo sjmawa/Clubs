@@ -91,3 +91,44 @@ def add_role(request, club_id):
         form = ClubRoleForm()
 
     return render(request, 'add_role.html', {'form': form, 'club': club})
+@login_required(login_url='sign-in')
+def update_club(request, club_id):
+    club = get_object_or_404(Club, id=club_id)
+
+    if not request.user.is_superuser and not club.memberships.filter(user=request.user, role__role_name="President").exists():
+        messages.error(request, "You are not authorized to update this club.")
+        return redirect('club-detail', club_id=club.id)
+
+    if request.method == 'POST':
+        form = ClubForm(request.POST, request.FILES, instance=club)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"{club.name} updated successfully!")
+            return redirect('club-detail', club_id=club.id)
+    else:
+        form = ClubForm(instance=club)
+
+    return render(request, 'update_club.html', {'club_form': form, 'club': club})
+@login_required(login_url='sign-in')
+def assign_role(request, club_id):
+    club = get_object_or_404(Club, id=club_id)
+    members = ClubMembership.objects.filter(club=club, confirmed=True)
+    roles = ClubRole.objects.filter(club=club)
+
+    if request.method == 'POST':
+        member_id = request.POST.get('member')
+        role_id = request.POST.get('role')
+
+        member = get_object_or_404(ClubMembership, id=member_id, club=club)
+        role = get_object_or_404(ClubRole, id=role_id, club=club)
+
+        member.role = role
+        member.save()
+        messages.success(request, f"{member.user.username} has been assigned as {role.role_name}.")
+        return redirect('club-detail', club_id=club.id)
+
+    return render(request, 'assign_role.html', {
+        'club': club,
+        'members': members,
+        'roles': roles
+    })
