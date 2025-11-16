@@ -46,29 +46,51 @@ def create_club(request):
 
 def join_club(request, club_id):
     club = get_object_or_404(Club, id=club_id)
-    if request.user.is_authenticated:
-        membership, created = ClubMembership.objects.get_or_create(user=request.user, club=club)
-        if created:
-            messages.success(request, f'You have requested to join {club.name}. Please confirm your membership via the email sent to you.')
-        elif not membership.confirmed:
-            messages.info(request, f'You have already requested to join {club.name}, please check your email.')
-        else:
-            messages.info(request, f'You are already a member of {club.name}.')
-    else:
-        messages.error(request, 'You need to be logged in to join a club.')
-    return redirect('club-detail', club_id=club.id)
 
-def confirm_membership(request, membership_id, token):
-    membership = get_object_or_404(ClubMembership, id=membership_id, confirmed=False)
-    #membership= ClubMembership.objects.get(id=membership_id)
-    if membership.confirmed:
-        return HttpResponse("Membership already confirmed.")
-    if default_token_generator.check_token(membership.user, token):
-        membership.confirmed = True
-        membership.save()
-        return HttpResponse("Membership confirmed!")
-    else:
-        return HttpResponse("Invalid or expired token.", status=400)
+    membership, created = ClubMembership.objects.get_or_create(
+        user=request.user,
+        club=club,
+        defaults={'confirmed': False}
+    )
+
+    if not created:
+        if membership.confirmed:
+            messages.info(request, "You are already a confirmed member of this club.")
+        else:
+            messages.info(request, "You already requested to join. Awaiting approval.")
+        return redirect('club-detail', club_id)
+
+    messages.success(request, "Your request to join the club has been submitted.")
+    return redirect('club-detail', club_id)
+
+def pending_requests(request, club_id):
+    club = get_object_or_404(Club, id=club_id)
+
+    # Replace with your actual executive role logic
+    # Example: only Executive Committee members may approve
+    if not request.user.is_staff:
+        return redirect('club-detail', club_id)
+
+    pending = ClubMembership.objects.filter(club=club, confirmed=False)
+    return render(request, 'pending_request.html', {
+        'club': club,
+        'pending': pending
+    })
+
+def approve_member(request, membership_id):
+    membership = get_object_or_404(ClubMembership, id=membership_id)
+    membership.confirmed = True
+    membership.save()
+    messages.success(request, f"{membership.user.username} has been approved!")
+    return redirect('pending-requests', membership.club.id)
+
+def reject_member(request, membership_id):
+    membership = get_object_or_404(ClubMembership, id=membership_id)
+    club_id = membership.club.id
+    membership.delete()
+    messages.warning(request, "Membership request rejected.")
+    return redirect('pending-requests', club_id)
+
     
 @login_required(login_url='sign-in')
 def add_role(request, club_id):
