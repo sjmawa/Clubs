@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-{% if messages %}
-                {% for message in messages %}
-                <p style="color:red;">{{ message }}</p>
-                {% endfor %}
-{% endif %}
 <div class="relative flex justify-center items-center mt-5 mb-5">
     <div class="flex flex-col items-center">
         {% if club.image %}
@@ -24,20 +19,24 @@
 </div>
 <div class= "container max-w-5xl mx-auto py-8 px-4 space-y-8">
 <div class="mt-4 mb-5">
-    {% if club.description %}
-        <p id="desc" class="text-gray-700 text-justify leading-relaxed whitespace-pre-line">
-            {{ club.description|slice:":250" }}{% if club.description|length > 250 %}...{% endif %}
-        </p>
-
-        {% if club.description|length > 250 %}
-        <button id="toggleDesc" 
-            class="text-blue-600 hover:underline max-w-5xl mx-auto block text-left">
-            Read more
-        </button>
+   {% if club.description %}
+    <!-- Summary (Inline Read More) -->
+    <p id="summaryText" class="text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ club.description|slice:":250" }}{% if club.description|length > 250 %}...
+            <span id="readMore" class="text-blue-600 cursor-pointer">Read More</span>
         {% endif %}
-    {% else %}
-        <p class="text-gray-500 italic mt-2">No description available.</p>
+    </p>
+
+    <!-- Full text (Hidden) -->
+    {% if club.description|length > 250 %}
+    <p id="fullText" class="hidden text-gray-700 leading-relaxed whitespace-pre-line">
+        {{ club.description }}
+        <span id="showLess" class="text-blue-600 cursor-pointer"> Show Less</span>
+    </p>
     {% endif %}
+{% else %}
+    <p class="text-gray-500 italic mt-2">No description available.</p>
+{% endif %}
 </div>
 <!-- Join Club Button -->
 <div class="max-w-5xl mx-auto text-center mt-6">
@@ -72,27 +71,25 @@
     <p>No executive committee members yet.</p>
 {% endif %}
 </div>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const desc = document.getElementById("desc");
-    const btn = document.getElementById("toggleDesc");
+    const readMore = document.getElementById('readMore');
+    const showLess = document.getElementById('showLess');
+    const summaryText = document.getElementById('summaryText');
+    const fullText = document.getElementById('fullText');
 
-    if (!btn) return;
+    if (readMore) {
+        readMore.addEventListener('click', () => {
+            summaryText.classList.add('hidden');
+            fullText.classList.remove('hidden');
+        });
+    }
 
-    const fullText = `{{ club.description|escapejs }}`;
-    const shortText = fullText.slice(0, 250) + "...";
-    let expanded = false;
-
-    btn.addEventListener("click", () => {
-        if (expanded) {
-            desc.textContent = shortText;
-            btn.textContent = "Read more";
-        } else {
-            desc.textContent = fullText;
-            btn.textContent = "Read less";
-        }
-        expanded = !expanded;
-    });
-});
+    if (showLess) {
+        showLess.addEventListener('click', () => {
+            fullText.classList.add('hidden');
+            summaryText.classList.remove('hidden');
+        });
+    }
 </script>
 {% endblock %}
