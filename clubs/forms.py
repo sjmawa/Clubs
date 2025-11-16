@@ -6,7 +6,7 @@ from events.forms import StyledFormMixin
 class ClubForm(StyledFormMixin, forms.ModelForm):
     class Meta:
         model = Club
-        fields = ['name', 'description', 'image','created_at']
+        fields = ['name', 'description', 'image','created_at', 'website', 'facebook', 'instagram', 'email']
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'Enter club name'}),
             'description': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe your club'}),

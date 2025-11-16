@@ -5,8 +5,8 @@ from clubs.models import Club
 
 class Event(models.Model):
     EVENT_TYPE_CHOICES = [
-        ('general', 'General'),
-        ('club', 'Club'),
+        ('general', 'Hosted by University'),
+        ('club', 'Hosted by a Club'),
     ]
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -20,7 +20,9 @@ class Event(models.Model):
     image = models.ImageField(upload_to='event_images/', blank=True, null=True)
     max_capacity = models.PositiveIntegerField(null=True, blank=True, help_text="Leave blank for unlimited capacity")
     is_online = models.BooleanField(default=False)
-
+    notice = models.BooleanField(default=False)
+    website = models.URLField(blank=True, null=True)
+    facebook = models.URLField(blank=True, null=True)
     class Meta:
         ordering = ['-date', '-time']
 

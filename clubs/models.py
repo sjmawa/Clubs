@@ -8,7 +8,10 @@ class Club(models.Model):
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     image = models.ImageField(upload_to='club_images/', blank=True, null=True)
-
+    website = models.URLField(blank=True, null=True)
+    facebook = models.URLField(blank=True, null=True)
+    instagram = models.URLField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
     def __str__(self):
         return self.name
     

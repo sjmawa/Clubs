@@ -8,7 +8,14 @@ class StyledFormMixin:
     default_classes = "block border-2 border-gray-300 p-3 w-full rounded-lg shadow-md focus:outline-none focus:border-rose-500 focus:ring-rose-500"
     def apply_styled_widget(self):
         for field_name, field in self.fields.items():
-            if isinstance(field.widget, forms.TextInput):
+            if isinstance(field.widget, forms.URLInput):
+                field.widget.attrs.update({
+                    'class': self.default_classes,
+                    'placeholder': f"Enter {field.label.lower() if field.label else field_name} URL",
+                    'type': 'url',
+                    'pattern': 'https?://.*',
+                })
+            elif isinstance(field.widget, forms.TextInput):
                 print("inside textinput")
                 field.widget.attrs.update({
                     'class': self.default_classes,
@@ -35,6 +42,10 @@ class StyledFormMixin:
                 field.widget.attrs.update({
                     'class': "space-y-2"
                 })
+            elif isinstance(field.widget, forms.CheckboxInput):
+               field.widget.attrs.update({
+                    'class': "h-5 w-5 text-rose-500 rounded focus:ring-rose-500 cursor-pointer",
+                })
             else:
                 print("inside else")
                 field.widget.attrs.update({
@@ -56,5 +67,5 @@ class EventForm(StyledFormMixin, forms.ModelForm):
         model = Event
         fields = [
             'title','description','event_type','club','date','time','location',
-            'image','max_capacity','is_online'
+            'image','max_capacity','is_online','notice','website','facebook'
         ]
