@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from clubs.views import club_list, club_detail, create_club,join_club, add_role, update_club,pending_requests, approve_member,reject_member
+from clubs.views import club_list, club_detail, create_club,join_club, add_role,cancel_request, update_club,pending_requests, approve_member,reject_member
 urlpatterns = [
     path('', club_list, name='club-list'),
     path('<int:club_id>/', club_detail, name='club-detail'),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('<int:club_id>/pending/', pending_requests, name='pending-requests'),
     path('approve/<int:membership_id>/',approve_member, name='approve-member'),
     path('reject/<int:membership_id>/',reject_member, name='reject-member'),
+    path('membership/<int:membership_id>/cancel/', cancel_request, name='cancel-request'),
 ]

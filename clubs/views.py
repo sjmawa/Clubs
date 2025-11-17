@@ -14,10 +14,17 @@ def club_list(request):
 def club_detail(request, club_id):
     club = get_object_or_404(Club, id=club_id)
     is_member = False
-
+    is_pending = False
+    membership_id = None 
     if request.user.is_authenticated:
-        is_member = club.memberships.filter(user=request.user).exists()
-    members = ClubMembership.objects.filter(club=club)
+        membership = ClubMembership.objects.filter(user=request.user,club=club).first()
+        if membership:
+            membership_id = membership.id 
+            if membership.confirmed:
+                is_member = True
+            else:
+                is_pending = True
+    members = ClubMembership.objects.filter(club=club,confirmed=True)
     roles = ClubRole.objects.filter(club=club)
     events = Event.objects.filter(club=club).order_by('-date')
     committee = members.filter(role__isnull=False).select_related('user', 'role')
@@ -27,8 +34,10 @@ def club_detail(request, club_id):
         'members': members,
         'roles': roles,
         'is_member': is_member,
+        'is_pending': is_pending,
         'events': events,
-        'committee': committee
+        'committee': committee,
+        'membership_id': membership_id
     })
 @login_required(login_url='sign-in')
 def create_club(request):
@@ -91,6 +100,18 @@ def reject_member(request, membership_id):
     messages.warning(request, "Membership request rejected.")
     return redirect('pending-requests', club_id)
 
+def cancel_request(request, membership_id):
+    membership = get_object_or_404(ClubMembership, id=membership_id)
+
+    if request.user != membership.user:
+        messages.error(request, "You are not authorized to cancel this request.")
+        return redirect('club-detail', membership.club.id)
+
+    club_id = membership.club.id
+    membership.delete()
+
+    messages.success(request, "Your join request has been canceled.")
+    return redirect('club-detail', club_id)
     
 @login_required(login_url='sign-in')
 def add_role(request, club_id):

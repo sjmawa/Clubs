@@ -20,14 +20,12 @@
 <div class= "container max-w-5xl mx-auto py-8 px-4 space-y-8">
 <div class="mt-4 mb-5">
    {% if club.description %}
-    <!-- Summary (Inline Read More) -->
     <p id="summaryText" class="text-gray-700 leading-relaxed whitespace-pre-line">
         {{ club.description|slice:":250" }}{% if club.description|length > 250 %}...
             <span id="readMore" class="text-blue-600 cursor-pointer">Read More</span>
         {% endif %}
     </p>
-
-    <!-- Full text (Hidden) -->
+    <!-- Full text -->
     {% if club.description|length > 250 %}
     <p id="fullText" class="hidden text-gray-700 leading-relaxed whitespace-pre-line">
         {{ club.description }}
@@ -45,8 +43,15 @@
         <button type="button" class="bg-gray-500 max-w-5xl mx-auto text-white font-semibold py-2 px-4 rounded-lg cursor-not-allowed" disabled>
             Joined
         </button>
+    {% elif is_pending %}
+        <form action="{% url 'cancel-request' membership_id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="bg-gray-500 max-w-5xl mx-auto hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+                Cancel Request
+            </button>
+        </form>
     {% else %}
-        <form action="{% url 'join-club' club.id %}" method="post">
+    <form action="{% url 'join-club' club.id %}" method="post">
             {% csrf_token %}
             <button type="submit" class="bg-blue-600 max-w-5xl mx-auto hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
                 Join Club
