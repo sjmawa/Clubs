@@ -152,6 +152,23 @@ def update_club(request, club_id):
         form = ClubForm(instance=club)
 
     return render(request, 'update_club.html', {'club_form': form, 'club': club})
+@login_required
+def delete_club(request, club_id):
+    club = get_object_or_404(Club, id=club_id)
+    # Permission rules:
+    # 2. Superuser (site admin)
+    # 3. Staff (moderators/admin panel access)
+    if (request.user.is_superuser and not request.user.is_staff):
+        messages.error(request, "You do not have permission to delete this club.")
+        return redirect('club-detail', club_id=club.id)
+
+    if request.method == "POST":
+        club.delete()
+        messages.success(request, "Club deleted successfully!")
+        return redirect('club-list')
+
+    return render(request, "delete_club_confirm.html", {"club": club})
+
 @login_required(login_url='sign-in')
 def assign_role(request, club_id):
     club = get_object_or_404(Club, id=club_id)
@@ -175,3 +192,4 @@ def assign_role(request, club_id):
         'members': members,
         'roles': roles
     })
+
