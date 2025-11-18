@@ -1,0 +1,26 @@
+<!-- templates/search_results.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+<h2 class="text-lg font-semibold mb-4">Search results for "{{ query }}"</h2>
+
+<h1 class="text-lg font-medium mb-2">Clubs</h3>
+{% if clubs %}
+    <div class="">
+        {% include 'lists/clubCards.html' with clubs=clubs %}
+    </div>
+{% else %}
+    <p>No clubs found.</p>
+{% endif %}
+
+<h1 class="text-lg font-medium mt-6 mb-2">Events</h3>
+{% if events %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% include 'lists/eventCards.html' with events=events %}
+    </div>
+{% else %}
+    <p>No events found.</p>
+{% endif %}
+</div>
+{% endblock %}

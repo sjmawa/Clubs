@@ -20,6 +20,11 @@
       <a href="{% url 'event-list' %} " class="hover:text-blue-700">Events</a>
 
       <!-- Conditional Links -->
+       {% if user.is_authenticated and user.is_staff %}
+       <a href="{% url 'create-club' %}" class="hover:text-blue-700">Create Club</a>
+      <a href="{% url 'create-event' %}" class="hover:text-blue-700">Create Event</a>
+       {% else %}
+       {% endif %}
       {% if user.is_authenticated %}
         {% comment %} <a href="#" class="hover:text-blue-700">Profile</a> {% endcomment %}
         <a href="{% url 'sign-out' %}" class="hover:text-red-600">Logout</a>
