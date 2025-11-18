@@ -124,16 +124,38 @@
 
 </div>
 {% include 'lists/eventCards.html' %}
-<h3 class="text-lg text-center font-semibold mb-2">Meet Our Executive Committee</h3>
+<h3 class="text-lg font-semibold mb-4 text-center">Meet Our Executive Committee</h3>
+
 {% if committee %}
-    <ul>
+    <ul class="space-y-4">
         {% for member in committee %}
-            <li>{{ member.role.role_name }} — {{ member.user.get_full_name|default:member.user.username }}</li>
+        <li class="flex items-center gap-4 bg-gray-100 p-4 rounded-xl shadow-sm">
+            <!-- Profile Picture -->
+            <img 
+                src="{% if member.user.image %}
+            {{ member.user.image.url }}
+            {% else %}
+            {% static 'images/default_dp.jpeg' %}
+            {% endif %}"
+             class="w-16 h-16 rounded-full object-cover"
+            />
+
+            <!-- Name + Role -->
+            <div>
+                <p class="text-lg font-semibold">
+                    {{ member.user.get_full_name|default:member.user.username }}
+                </p>
+                <p class="text-gray-600 text-sm">
+                    {{ member.role.role_name }}
+                </p>
+            </div>
+        </li>
         {% endfor %}
     </ul>
 {% else %}
-    <p>No executive committee members yet.</p>
+    <p class="text-center text-gray-500">No executive committee members yet.</p>
 {% endif %}
+
 </div>
 
 <script>
