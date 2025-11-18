@@ -4,14 +4,6 @@
 
     <div class="container p-4 w-full sm:w-3/4 md:w-1/2 lg:w-2/3 mx-auto">
         <div>
-        {% if messages %}
-        {% for message in messages %}
-            <div class="px-2 py-1 rounded-lg
-            {% if message.tags == 'success' %}bg-green-300 text-green-600
-            {% else %}bg-red-300 text-red-600
-             {% endif %}">{{message}}</div>
-        {% endfor %}
-        {% endif %}
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{event_form}}
