@@ -54,7 +54,17 @@
         {% comment %} Join or Action Buttons {% endcomment %}
         {% if user.is_authenticated %}
         <div class="flex items-center gap-3 pt-3">
-            {% if is_joined %}
+            {% if user.is_staff %}
+            <a href="{% url 'update-event' event.id %}" 
+            class="px-4 py-2 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition"> 
+            Edit Event </a> 
+            <form action="{% url 'delete-event' event.id %}" method="POST" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">
+             Delete Event
+            </button>
+            </form>
+            {% elif is_joined %}
                 <form action="{% url 'leave-event' event.id %}" method="POST">
                     {% csrf_token %}
                     <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">

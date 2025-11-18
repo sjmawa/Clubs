@@ -4,6 +4,9 @@ from django.contrib import messages
 from events.forms import EventForm
 from events.models import Event
 from events.models import EventAttendance as EventParticipant
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def event_list(request):
@@ -26,9 +29,40 @@ def create_event(request):
         form = EventForm()
     
     return render(request, 'create_event.html', {'event_form': form})
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+def update_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    # Allow creator OR staff
+    if event.created_by != request.user and not request.user.is_staff:
+        messages.error(request, "You are not allowed to edit this event.")
+        return redirect('event-detail', event.id)
+
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Event updated successfully!")
+            return redirect('event-detail', event.id)
+    else:
+        form = EventForm(instance=event)
+
+    return render(request, 'update_event.html', {
+        'event_form': form,
+        'event': event
+    })
+@login_required
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if event.created_by != request.user and not request.user.is_staff:
+        messages.error(request, "You are not allowed to delete this event.")
+        return redirect('event-detail', event.id)
+
+    if request.method == 'POST':
+        event.delete()
+        messages.success(request, "Event deleted successfully!")
+        return redirect('event-list')
+
+    return redirect('event-detail', event.id)
 
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
