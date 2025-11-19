@@ -1,0 +1,56 @@
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow">
+    <h1 class="text-xl font-bold mb-4">All Users</h1>
+
+    <table class="w-full">
+        <tr class="bg-gray-100 font-semibold">
+            <td class="px-4 py-2">Username</td>
+            <td class="px-4 py-2">Email</td>
+            <td class="px-4 py-2 text-center">Action</td>
+        </tr>
+
+        {% for user in users %}
+        <tr class="border-b">
+            <td class="px-4 py-2">{{ user.username }}</td>
+            <td class="px-4 py-2">{{ user.email }}</td>
+
+            <td class="px-4 py-2 text-center">
+
+                <!-- If not staff: purple assign button -->
+                {% if not user.is_staff %}
+                <form method="POST" class="inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <input type="hidden" name="action" value="make">
+
+                    <button 
+                        type="submit"
+                        class="px-4 py-1 rounded-lg text-white"
+                        style="background-color: #7c3aed;" 
+                        onclick="return confirm('Make {{ user.username }} a staff member?');"
+                    >
+                        Assign Staff
+                    </button>
+                </form>
+
+                <!-- If staff: red remove button -->
+                {% else %}
+                <form method="POST" class="inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <input type="hidden" name="action" value="remove">
+
+                    <button 
+                        type="submit"
+                        class="px-4 py-1 rounded-lg text-white bg-red-500"
+                        onclick="return confirm('Remove staff permission from {{ user.username }}?');"
+                    >
+                        Remove Staff
+                    </button>
+                </form>
+                {% endif %}
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
