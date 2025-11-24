@@ -23,6 +23,7 @@
        {% if user.is_authenticated and user.is_staff %}
        <a href="{% url 'create-club' %}" class="hover:text-blue-700">Create Club</a>
       <a href="{% url 'create-event' %}" class="hover:text-blue-700">Create Event</a>
+      <a href="{% url 'user-list' %}" class="hover:text-blue-700">Users</a>
        {% else %}
        {% endif %}
       {% if user.is_authenticated %}
