@@ -32,7 +32,7 @@ def search(request):
     return render(request, 'search_results.html', context)
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)  # only superuser can give staff permission
+@user_passes_test(lambda u: u.is_superuser)
 def user_list(request):
     users = User.objects.all().order_by("username")
 
@@ -53,4 +53,4 @@ def user_list(request):
 
         return redirect("user-list")
 
-    return render(request, "users/user_list.html", {"users": users})
+    return render(request, "user_list.html", {"users": users})
