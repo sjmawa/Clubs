@@ -15,6 +15,13 @@ class StyledFormMixin:
                     'type': 'url',
                     'pattern': 'https?://.*',
                 })
+            elif isinstance(field.widget, forms.EmailInput):
+                print("inside email")
+                field.widget.attrs.update({
+                'class': self.default_classes,
+                "placeholder": f"Enter {field.label.lower() if field.label else field_name}",
+                "type": "email"
+                })
             elif isinstance(field.widget, forms.TextInput):
                 print("inside textinput")
                 field.widget.attrs.update({

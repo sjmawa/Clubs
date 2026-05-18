@@ -4,9 +4,8 @@ from django.contrib import messages
 from events.forms import EventForm
 from events.models import Event
 from events.models import EventAttendance as EventParticipant
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def event_list(request):

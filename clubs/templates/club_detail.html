@@ -55,9 +55,12 @@
 </div>
 {% if club.email %}
 <div class="flex justify-center max-w-5xl mx-auto text-center gap-4 mt-6">
-    <a href="mailto:{{ club.email }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
-        Contact via Email
-    </a>
+    <p>Contact us at: 
+        <span class="text-blue-600 hover:underline">
+            {{ club.email }}
+        </span>
+    </p>
+</div>
 {% else %}
 {% endif %}
 <!-- Join Club Button -->

@@ -9,7 +9,8 @@ User= get_user_model()
 # Create your views here.
 def home(request):
     Events= Event.objects.all().order_by('-date')[:3]
-    return render(request, 'home.html', {'events': Events})
+    clubs = Club.objects.all()[:3]
+    return render(request, 'home.html', {'events': Events,'clubs': clubs})
 
 def search(request):
     query = request.GET.get('q', '')  # get the search term
